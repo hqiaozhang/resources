@@ -6,7 +6,8 @@ export default class SystemToggleDrawer {
     this.container = options.container || document.body; // 支持自定义挂载点
     this.keyword = '';
     this.drawerVisible = false;
-    this.init();
+
+    this.init(); 
   }
 
   init() {
@@ -15,12 +16,15 @@ export default class SystemToggleDrawer {
     this.renderMask(); // 初始化遮罩
   }
 
+  // 更新菜单数据的方法
+  updateMenus(newMenus) {
+    this.menus = newMenus; // 更新菜单数据
+    this.renderMenuList(); // 重新渲染菜单列表
+  }
+
   renderTooltip() {
-    const tooltip = document.createElement('div');
-    tooltip.className = 'system-action';
-    tooltip.innerHTML = `
-      <i class="icon-system-toggle"></i>
-    `;
+    const tooltip = document.createElement('span');
+    tooltip.className = 'icon-system-toggle'; 
     tooltip.addEventListener('click', () => this.openDrawer(true));
     this.container.appendChild(tooltip); // 挂载到指定容器
   }
@@ -65,7 +69,7 @@ export default class SystemToggleDrawer {
   renderMenuList() {
     const itemList = this.drawer.querySelector('.item-list');
     itemList.innerHTML = '';
-    const filteredMenus = this.getSysList();
+    const filteredMenus = this.getSysList(); 
     filteredMenus.forEach(item => {
       const itemElement = document.createElement('div');
       itemElement.className = `item-list-item ${this.getActive(item) ? 'active' : ''}`;
@@ -103,7 +107,16 @@ export default class SystemToggleDrawer {
     const hostname = window.location.hostname;
     const isHost = hostname === 'localhost';
     if (exteriorUrl && exteriorUrl.includes(hostname) && !isHost) return;
-    if (this.onChange) this.onChange(item);
+    if (this.onChange) {
+      this.onChange(item)
+    }else {
+      this.handleSysMenu(item)
+    }
+  }
+
+   // 处理菜单切换
+  handleSysMenu = (item) => {
+    window.location.href = `${item.exteriorUrl}?systemCode=${item.id}`;
   }
 
   getActive(item) {
